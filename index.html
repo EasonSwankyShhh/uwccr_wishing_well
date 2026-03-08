@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>UWC Task Board</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>UWC Task Board</h1>
+  <p>Post requests. Tap Share/Obtain to jump to WhatsApp.</p>
+
+  <h2>New Request</h2>
+
+  <div>
+    <label>Title</label><br>
+    <input id="title" placeholder="What do you need help with?" />
+    <br><br>
+
+    <label>Deadline</label><br>
+    <input type="datetime-local" id="deadline" />
+    <br><br>
+
+    <label>Prize</label><br>
+    <input id="prize" placeholder="e.g. 5 USD / coffee" />
+    <br><br>
+
+    <label>Contact (WhatsApp number, optional)</label><br>
+    <input id="contact" placeholder="+506..." />
+    <br><br>
+
+    <button id="post">Post</button>
+    <button id="refresh">Refresh</button>
+  </div>
+
+  <h2>Requests</h2>
+  <div id="list"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
