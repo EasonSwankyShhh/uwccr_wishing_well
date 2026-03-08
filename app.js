@@ -159,3 +159,26 @@ function clearExpiredRequests() {
 
 // Check for expired requests every 30 seconds
 setInterval(clearExpiredRequests, 30000);
+
+// 專業的數據清理邏輯 (Data Cleansing)
+function purgeOldData() {
+    const now = new Date().getTime();
+    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+
+    // 將所有過期的 Request 過濾掉
+    const cleanData = requests.filter(req => {
+        // 確保 deadline 是有效的時間格式
+        const expiry = new Date(req.deadline).getTime();
+        return expiry > now; // 只保留「未來」的任務
+    });
+
+    // 如果數據有變動，更新存儲並重新渲染
+    if (cleanData.length !== requests.length) {
+        localStorage.setItem('requests', JSON.stringify(cleanData));
+        renderRequests(); // 呼叫你原本畫出清單的那個 function
+        console.log("System: Expired records have been purged for data integrity.");
+    }
+}
+
+// 網頁一載入就清一次，確保畫面乾淨
+purgeOldData();
