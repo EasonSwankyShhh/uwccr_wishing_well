@@ -140,3 +140,22 @@ $("post").onclick = async () => {
 
 $("refresh").onclick = refresh;
 refresh();
+
+// Function to clear expired requests automatically
+function clearExpiredRequests() {
+    const now = new Date().getTime();
+    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+    
+    // Only keep requests that haven't expired yet
+    const activeRequests = requests.filter(req => {
+        return new Date(req.deadline).getTime() > now;
+    });
+
+    if (activeRequests.length !== requests.length) {
+        localStorage.setItem('requests', JSON.stringify(activeRequests));
+        location.reload(); // Refresh to update the UI
+    }
+}
+
+// Check for expired requests every 30 seconds
+setInterval(clearExpiredRequests, 30000);
