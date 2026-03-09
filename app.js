@@ -182,3 +182,26 @@ function purgeOldData() {
 
 // 網頁一載入就清一次，確保畫面乾淨
 purgeOldData();
+
+// 核心邏輯：自動清洗過期數據 (Data Integrity Protection)
+function purgeExpiredRequests() {
+    const now = new Date().getTime(); // 獲取當前時間戳
+    let requests = JSON.parse(localStorage.getItem('requests')) || [];
+
+    // 篩選：只保留「結束時間 > 現在時間」的 Request
+    const cleanList = requests.filter(req => {
+        const deadlineDate = new Date(req.deadline).getTime();
+        return deadlineDate > now;
+    });
+
+    // 如果發現有數據被篩掉了，就更新儲存並重新整理頁面
+    if (cleanList.length !== requests.length) {
+        localStorage.setItem('requests', JSON.stringify(cleanList));
+        location.reload(); 
+        console.log("System: Expired requests purged for data integrity.");
+    }
+}
+
+// 立即執行並設定每分鐘檢查一次
+purgeExpiredRequests();
+setInterval(purgeExpiredRequests, 60000);
