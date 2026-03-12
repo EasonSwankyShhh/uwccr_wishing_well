@@ -95,26 +95,24 @@ async function refresh() {
 
       if (act === "share") openWhatsApp(makeRequestText(t));
 
-    if (act === "obtain") {
-    const who = (localStorage.getItem("uwc_name") || prompt("Your name?") || "").trim();
-    if (!who) return;
-    localStorage.setItem("uwc_name", who);
+  if (act === "obtain") {
+        const who = (localStorage.getItem("uwc_name") || prompt("Your name?") || "").trim();
+        if (!who) return;
+        localStorage.setItem("uwc_name", who);
 
-    // ✅ 這一段 Supabase 更新邏輯必須留著，不然資料庫不會更新狀態！
-    const { data: claimed, error } = await supabase
-        .from("tasks")
-        .update({ status: "claimed", claimed_by: who, claimed_at: new Date().toISOString() })
-        .eq("id", id)
-        .eq("status", "open")
-        .select()
-        .maybeSingle();
+        const { data: claimed, error } = await supabase
+          .from("tasks")
+          .update({ status: "claimed", claimed_by: who, claimed_at: new Date().toISOString() })
+          .eq("id", id)
+          .eq("status", "open")
+          .select()
+          .maybeSingle();
 
-    if (error) return alert("Claim failed: " + error.message);
-    if (!claimed) { alert("Too late..."); return refresh(); }
+        if (error) return alert("Claim failed: " + error.message);
+        if (!claimed) { alert("Too late—someone already claimed it."); return refresh(); }
 
-    // ✅ 最後換成這兩行（你改對了！）
-    const requesterPhone = phoneToWaMePath(t.contact).replace("/", ""); 
-    openWhatsApp(makeObtainText(t, who), requesterPhone);
+        const requesterPhone = phoneToWaMePath(t.contact).replace("/", "");
+        openWhatsApp(makeObtainText(t, who), requesterPhone);
 }
 
        // 1. 把發文者的電話從資料中抓出來，轉成 WhatsApp 專用的純數字格式
