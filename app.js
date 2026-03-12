@@ -85,6 +85,7 @@ async function refresh() {
     `;
   }).join("");
 
+// 重新綁定所有按鈕的點擊事件
   $("list").querySelectorAll("a[data-act][data-id]").forEach(a => {
     a.onclick = async (e) => {
       e.preventDefault();
@@ -93,14 +94,16 @@ async function refresh() {
       const t = tasks.find(x => x.id === id);
       if (!t) return;
 
-      if (act === "share") openWhatsApp(makeRequestText(t));
+      if (act === "share") {
+        openWhatsApp(makeRequestText(t));
+      }
 
-  if (act === "obtain") {
+      if (act === "obtain") {
         const who = (localStorage.getItem("uwc_name") || prompt("Your name?") || "").trim();
         if (!who) return;
         localStorage.setItem("uwc_name", who);
 
-        const { data: claimed, error } = await supabase
+        const { data: claimed, error: updateErr } = await supabase
           .from("tasks")
           .update({ status: "claimed", claimed_by: who, claimed_at: new Date().toISOString() })
           .eq("id", id)
@@ -108,22 +111,23 @@ async function refresh() {
           .select()
           .maybeSingle();
 
-        if (error) return alert("Claim failed: " + error.message);
-        if (!claimed) { alert("Too late—someone already claimed it."); return refresh(); }
-
-        const requesterPhone = phoneToWaMePath(t.contact).replace("/", "");
-        openWhatsApp(makeObtainText(t, who), requesterPhone);
-}
-
-     // 1. 抓取電話
-        const requesterPhone = phoneToWaMePath(t.contact).replace("/", "");
+        if (updateErr) {
+          alert("Claim failed: " + updateErr.message);
+          return;
+        }
         
-        // 2. 撥號（注意這裡所有的符號都是半形）
+        if (!claimed) {
+          alert("Too late—someone already claimed it.");
+          return refresh();
+        }
+
+        // 精準修復這裡的電話跳轉
+        const requesterPhone = phoneToWaMePath(t.contact).replace("/", "");
         openWhatsApp(makeObtainText(t, who), requesterPhone);
       }
     };
   });
-}
+} // 這是 refresh 函式的最後一個大括號，請確保它存在且只有一個
 
 $("post").onclick = async () => {
   const title = $("title").value.trim();
