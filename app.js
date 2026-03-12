@@ -115,11 +115,11 @@ async function refresh() {
         openWhatsApp(makeObtainText(t, who), requesterPhone);
 }
 
-       // 1. 把發文者的電話從資料中抓出來，轉成 WhatsApp 專用的純數字格式
-const requesterPhone = phoneToWaMePath(t.contact).replace("/", ""); 
-
-// 2. 傳入電話，直接導向對方的聊天室
-openWhatsApp(makeObtainText(t, who), requesterPhone);
+     // 1. 抓取電話
+        const requesterPhone = phoneToWaMePath(t.contact).replace("/", "");
+        
+        // 2. 撥號（注意這裡所有的符號都是半形）
+        openWhatsApp(makeObtainText(t, who), requesterPhone);
       }
     };
   });
