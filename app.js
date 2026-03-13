@@ -65,38 +65,6 @@ async function refresh() {
 
 }
 
-function makeRequestText(t) {
-  return [
-    "📌 UWC TASK REQUEST",
-    `Title: ${t.title}`,
-    `Deadline: ${t.deadline}`,
-    `Reward: ${t.prize}`,
-    "",
-    "Click link to obtain:",
-    window.location.href
-  ].join("\n");
-}
-
-function makeObtainText(t, who) {
-  return [
-    "✅ OBTAIN",
-    `I want to obtain your request.`,
-    `• Title: ${t.title}`,
-    `• Deadline: ${t.deadline}`,
-    `• Prize: ${t.prize}`,
-    "",
-    `From: ${who}`,
-    "When can we coordinate?"
-  ].join("\n");
-}
-
-// 修改這段：增加一個 phone 參數
-function openWhatsApp(text, phone = "") {
-  // 如果有電話，就加在 wa.me/ 後面；沒有的話就維持現狀
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-  window.location.href = url;
-}
-
 async function refresh() {
   const { data, error } = await supabase
     .from("tasks")
